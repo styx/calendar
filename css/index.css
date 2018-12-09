@@ -1,0 +1,103 @@
+.main {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 100px;
+  min-width: 100px;
+}
+
+.open-timepicker {
+  position: relative;
+}
+
+.ztimep {
+  border: 4px maroon solid;
+  display: none;
+  position: absolute;
+  z-index: 1000;
+}
+
+.ztimep-save {
+  background-color: darkgreen;
+  border-style: groove;
+  color: white;
+  font-size: 1rem;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  text-align: center;
+  width: 100%;
+}
+
+.ztimep-save-wrapper {
+  padding: 4px;
+}
+
+.ztimep-save:disabled,
+.ztimep-save[disabled]{
+  background-color: gray;
+  color: #333;
+}
+
+/* Header */
+.ztimep-header {
+  background-color: #191919;
+  clear: both;
+  width: 100%;
+  height: 24px;
+}
+
+.ztimep-header .fa-clock-o {
+  color: white;
+}
+
+.ztimep-header-label {
+  color: white;
+  float: left;
+}
+
+.ztimep-header-input {
+  display: none;
+  float: left;
+}
+
+.ztimep-close {
+  float: right;
+}
+
+/* Table */
+.ztimep-table {
+  table-layout: fixed;
+  width: 304px;
+}
+
+.ztimep-table thead {
+  font-weight: bold;
+  text-align: center;
+}
+
+.ztimep-table tbody td {
+  padding: 0;
+  text-align: center;
+  width: 75px;
+  height: 75px;
+  position: relative;
+  border-style: groove;
+  background-color: grey;
+}
+
+.ztimep-table tbody tr .active {
+  background-color: #333;
+}
+
+.ztimep-table tbody td div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.ztimep-table .ztimep-table-vertical-splitter {
+  width: 2px;
+  border-style: none;
+  background-color: white;
+}
