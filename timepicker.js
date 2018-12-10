@@ -16,6 +16,7 @@
   var ztimepTemplate =
   "<div class='ztimep-controls'>" +
     "<div class='ztimep-header'>" +
+      "<i class='fa fa-clock-o' aria-hidden='true'></i>" +
       "<div class='ztimep-header-label'>" +
         "<%= saveEnabled ? hour + ':' + min + (inNormalMode ? (' ' + ampm) : '') : '' %>" +
       "</div>" +
@@ -23,15 +24,14 @@
       "<button class='ztimep-close'>" +
         "X" +
       "</button>"+
-      "<i class='fa fa-clock-o' aria-hidden='true'></i>" +
     "</div>" +
     "<table class='ztimep-table' border='0' cellspacing='0' cellpadding='0'>" +
       "<thead>" +
           "<tr class='ztimep-table-header'>" +
-            "<td colspan='2'>Hours</td>" +
+            "<td class='table-title' colspan='2'>Hours</td>" +
             "<td class='ztimep-table-vertical-splitter'></td>" +
             "<td class='ztimep-table-vertical-splitter'></td>" +
-            "<td colspan='2'>Mins</td>" +
+            "<td class='table-title' colspan='2'>Mins</td>" +
           "</tr>" +
       "</thead>" +
       "<tbody>" +
@@ -84,6 +84,7 @@
           "<td class='ztimep-table-min <%= min === '55' ? 'active' : '' %>'><div>55</div></td>" +
         "</tr>" +
         "<% if (inNormalMode) {%>" +
+          "<tr class='ztimep-table-horizontal-splitter'></tr>" +
           "<tr class='ztimep-table-ampm'>" +
             "<td colspan='3' class='ztimep-table-am <%= ampm === 'am' ? 'active' : '' %>'><div>am</div></td>" +
             "<td colspan='3' class='ztimep-table-pm <%= ampm === 'pm' ? 'active' : '' %>'><div>pm</div></td>" +
@@ -119,6 +120,7 @@
       headerLabel: 'ztimep-header-label',
       selectAm: 'ztimep-table-am',
       selectPm: 'ztimep-table-pm',
+      modal: 'ztimep-controls',
     },
   };
 
@@ -158,8 +160,8 @@
 
     this.calendarContainer = $('.ztimep', this.element);
 
-    this.bindEvents();
     this.render();
+    this.bindEvents();
   }
 
   ZTimeP.prototype.bindEvents = function () {
@@ -184,6 +186,8 @@
       .off(onClickEventName, '.' + targets.close)
       .off('focusout.ztimep', '.' + targets.headerInput);
 
+    $(document).off('keydown.ztimep');
+    
     data = {
       context: this
     };
@@ -198,7 +202,20 @@
       .on(onClickEventName, '.' + targets.selectPm, data, this.selectAmPm)
       .on(onClickEventName, '.' + targets.close, data, this.close)
       .on('focusout.ztimep', '.' + targets.headerInput, data, this.outOfManualMode);
-  };
+    
+    $(document).on('keydown.ztimep', data, this.keyevent);
+ };
+
+  ZTimeP.prototype.keyevent = function (event) {
+    var ctx = event.data.context;
+    if (event.keyCode == 27) {
+      ctx.close(event);
+    } else if (event.keyCode == 13) {
+      if (ctx.hour && ctx.min && ctx.ampm) {
+        ctx.save(event);
+      }
+    }
+  }
 
   ZTimeP.prototype.render = function () {
     var hour24 = (parseInt(this.hour) || 0) + (this.ampm === 'pm' ? 12 : 0);
@@ -212,14 +229,21 @@
       inNormalMode: !this.options.duration,
     };
 
-    console.log(data);
-
     this.calendarContainer.empty();
     this.calendarContainer.html(this.compiledZTimePTemplate(data));
   };
 
   ZTimeP.prototype.open = function (event) {
-    var ctx = event.data.context;
+    var ctx = event.data.context
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+      $(ctx.calendarContainer).css({
+        width: window.innerWidth - 8,
+        height: window.innerHeight - 8,
+        position: "fixed",
+        bottom: 0,
+        left: 0
+      });
+    }
     ctx.calendarContainer.show();
   };
 
